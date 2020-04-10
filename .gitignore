@@ -26,4 +26,4 @@
 !.vscode/extensions.json
 *.code-workspace
 
-
+.env

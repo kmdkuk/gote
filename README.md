@@ -5,3 +5,6 @@
 
 ICMPの使い方の参考
 https://mattn.kaoriya.net/software/lang/go/20180315230112.htm
+
+TwitterApiの使い方の参考
+https://rightcode.co.jp/blog/information-technology/golang-introduction-twitter-api
