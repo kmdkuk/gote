@@ -107,15 +107,15 @@ func sendPing(c *icmp.PacketConn, proto, host string, timeout time.Duration) boo
 	rb := make([]byte, 1500)
 	n, _, err := c.ReadFrom(rb)
 	if err != nil {
-		log.Println("ping失敗")
+		log.Println(ip.IP.String() + " ping失敗")
 		return false
 	}
 	rm, err := icmp.ParseMessage(ipv4.ICMPTypeEcho.Protocol(), rb[:n])
 	if err == nil && rm.Type == ipv4.ICMPTypeEchoReply {
-		log.Println("ping成功")
+		log.Println(ip.IP.String() + " ping成功")
 		return true
 	}
-	log.Println("ping失敗")
+	log.Println(ip.IP.String() + " ping失敗")
 	return false
 }
 
@@ -130,7 +130,7 @@ func main() {
 	flag.Parse()
 
 	proto := "ip4"
-	host := "kmdkuk.com"
+	host := "minecraft.kmdkuk.com"
 
 	c, err := icmp.ListenPacket(proto+":icmp", "0.0.0.0")
 	if err != nil {
