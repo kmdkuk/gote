@@ -108,14 +108,16 @@ func sendPing(c *icmp.PacketConn, proto, host string, timeout time.Duration) boo
 	n, _, err := c.ReadFrom(rb)
 	if err != nil {
 		log.Println(ip.IP.String() + " ping失敗")
+		log.Fatalf("err: %v", err)
 		return false
 	}
 	rm, err := icmp.ParseMessage(ipv4.ICMPTypeEcho.Protocol(), rb[:n])
 	if err == nil && rm.Type == ipv4.ICMPTypeEchoReply {
-		log.Println(ip.IP.String() + " ping成功")
+		// log.Println(ip.IP.String() + " ping成功")
 		return true
 	}
 	log.Println(ip.IP.String() + " ping失敗")
+	log.Fatalf("err: %v", err)
 	return false
 }
 
