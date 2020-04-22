@@ -97,10 +97,10 @@ func sendPing(c *icmp.PacketConn, proto, host string, timeout time.Duration) boo
 	}
 	wb, err := wm.Marshal(nil)
 	if err != nil {
-		log.Fatalf("Marshal: %v", err)
+		log.Printf("Marshal: %v", err)
 	}
 	if _, err := c.WriteTo(wb, &net.IPAddr{IP: ip.IP}); err != nil {
-		log.Fatalf("WriteTo: %v", err)
+		log.Printf("WriteTo: %v", err)
 	}
 
 	c.SetReadDeadline(time.Now().Add(timeout))
@@ -108,7 +108,7 @@ func sendPing(c *icmp.PacketConn, proto, host string, timeout time.Duration) boo
 	n, _, err := c.ReadFrom(rb)
 	if err != nil {
 		log.Println(ip.IP.String() + " ping失敗")
-		log.Fatalf("err: %v", err)
+		log.Printf("err: %v", err)
 		return false
 	}
 	rm, err := icmp.ParseMessage(ipv4.ICMPTypeEcho.Protocol(), rb[:n])
@@ -117,7 +117,7 @@ func sendPing(c *icmp.PacketConn, proto, host string, timeout time.Duration) boo
 		return true
 	}
 	log.Println(ip.IP.String() + " ping失敗")
-	log.Fatalf("err: %v", err)
+	log.Printf("err: %v", err)
 	return false
 }
 
