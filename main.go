@@ -69,7 +69,7 @@ func tweet(api *anaconda.TwitterApi) {
 func isStatusToggled() bool {
 	result := false
 	if recentStatus {
-		if count > 9 && recentPingResult == false {
+		if count > 5 && recentPingResult == false {
 			result = true
 		}
 	} else {
@@ -127,7 +127,7 @@ func main() {
 	var sleep time.Duration
 	var timeout time.Duration
 
-	flag.DurationVar(&sleep, "s", 1*time.Second, "sleep")
+	flag.DurationVar(&sleep, "s", 2*time.Second, "sleep")
 	flag.DurationVar(&timeout, "t", 1*time.Second, "timeout")
 	flag.Parse()
 
