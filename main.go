@@ -83,7 +83,7 @@ func isStatusToggled() bool {
 func sendPing(c *icmp.PacketConn, proto, host string, timeout time.Duration) bool {
 	ip, err := net.ResolveIPAddr(proto, host)
 	if err != nil {
-		log.Println("ping失敗")
+		log.Printf("ping失敗: %d", count)
 		log.Printf("ResolveIPAddr: %v", err)
 		return false
 	}
@@ -107,7 +107,7 @@ func sendPing(c *icmp.PacketConn, proto, host string, timeout time.Duration) boo
 	rb := make([]byte, 1500)
 	n, _, err := c.ReadFrom(rb)
 	if err != nil {
-		log.Println(ip.IP.String() + " ping失敗")
+		log.Printf(ip.IP.String()+" ping失敗: %d", count)
 		log.Printf("err: %v", err)
 		return false
 	}
@@ -116,7 +116,7 @@ func sendPing(c *icmp.PacketConn, proto, host string, timeout time.Duration) boo
 		// log.Println(ip.IP.String() + " ping成功")
 		return true
 	}
-	log.Println(ip.IP.String() + " ping失敗")
+	log.Printf(ip.IP.String()+" ping失敗: %d", count)
 	log.Printf("err: %v", err)
 	return false
 }
