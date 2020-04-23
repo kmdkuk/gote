@@ -107,8 +107,8 @@ func sendPing(c *icmp.PacketConn, proto, host string, timeout time.Duration) boo
 	rb := make([]byte, 1500)
 	n, _, err := c.ReadFrom(rb)
 	if err != nil {
-		log.Printf(ip.IP.String()+" ping失敗: %d", count)
-		log.Printf("err: %v", err)
+		// log.Printf(ip.IP.String()+" ping失敗: %d", count)
+		// log.Printf("err: %v", err)
 		return false
 	}
 	rm, err := icmp.ParseMessage(ipv4.ICMPTypeEcho.Protocol(), rb[:n])
@@ -116,8 +116,8 @@ func sendPing(c *icmp.PacketConn, proto, host string, timeout time.Duration) boo
 		// log.Println(ip.IP.String() + " ping成功")
 		return true
 	}
-	log.Printf(ip.IP.String()+" ping失敗: %d", count)
-	log.Printf("err: %v", err)
+	// log.Printf(ip.IP.String()+" ping失敗: %d", count)
+	// log.Printf("err: %v", err)
 	return false
 }
 
@@ -142,6 +142,9 @@ func main() {
 
 	for {
 		if sendPing(c, proto, host, timeout) {
+			if count > 0 {
+				log.Printf("pingが復旧するまで %d 回エラー", count)
+			}
 			count = 0
 			recentPingResult = true
 			if isStatusToggled() {
