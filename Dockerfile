@@ -9,13 +9,15 @@ ENV APP_ROOT /usr/src/network-monitoring
 RUN mkdir -p ${APP_ROOT}
 WORKDIR ${APP_ROOT}
 
-COPY go.mod ${APP_ROOT}
-COPY go.sum ${APP_ROOT}
+COPY go.mod .
+COPY go.sum .
 RUN go mod download
-COPY . ${APP_ROOT}
+COPY . .
 RUN go build -o "bin/network-monitoring"
 
 FROM alpine
-RUN echo $APP_ROOT
+RUN apk --no-cache add tzdata && \
+  cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
+  apk del tzdata
 COPY --from=builder /usr/src/network-monitoring/bin/network-monitoring /network-monitoring
 

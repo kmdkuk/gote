@@ -5,3 +5,18 @@ services:
     env_file: .env
     command: "/network-monitoring"
     restart: always
+    depends_on:
+      - db
+  db:
+    image: mysql:5.7
+    environment:
+      TZ: "Asia/Tokyo"
+    env_file: docker/db/.env
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./docker/db/conf.d:/etc/mysql/conf.d/
+      - ./docker/db/initdb.d:/docker-entrypoint-initdb.d
+      - ./docker/db/log:/var/log/mysql
+volumes:
+  db-data:
+    driver: local
