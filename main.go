@@ -40,7 +40,7 @@ func connectTwitterApi() *anaconda.TwitterApi {
 }
 
 func initialize() *anaconda.TwitterApi {
-	loadEnv()
+	// loadEnv()
 	recentPingResult = true
 	recentStatus = true
 	count = 0
