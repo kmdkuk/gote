@@ -3,7 +3,7 @@ services:
   app:
     build: .
     env_file: .env
-    command: "/network-monitoring"
+    command: "/gote"
     restart: always
     depends_on:
       - db
