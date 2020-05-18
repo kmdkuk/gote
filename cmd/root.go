@@ -17,12 +17,24 @@ var (
 	recentPingResult bool
 	recentStatus     bool
 	count            int
+	opt              Options
 )
+
+type Options struct {
+	mode         string
+	host         string
+	notification string
+}
 
 func init() {
 	recentPingResult = true
 	recentStatus = true
 	count = 0
+	opt = Options{}
+
+	rootCmd.Flags().StringVarP(&opt.mode, "mode", "m", "ping", "How to do a health check. ping or http")
+	rootCmd.Flags().StringVarP(&opt.host, "target", "t", "127.0.0.1", "Target for health check. domain or ip or URL")
+	rootCmd.Flags().StringVarP(&opt.notification, "notification", "n", "slack", "Destination to notify when health check fails. slack or twitter")
 }
 
 func Execute() {
