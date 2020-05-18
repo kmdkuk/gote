@@ -3,7 +3,6 @@ package twitter
 import (
 	"log"
 	"os"
-	"time"
 
 	"github.com/ChimeraCoder/anaconda"
 )
@@ -18,23 +17,15 @@ func connectTwitterAPI() *anaconda.TwitterApi {
 	return anaconda.NewTwitterApiWithCredentials(at, ats, ck, cs)
 }
 
-func Tweet(recentStatus bool) {
-	t := time.Now()
-	layout := "2006-01-02 15:04"
-	log.Println("ping失敗")
-	message := ""
-	hashtag := "#kmdkukのネット回線"
-	if recentStatus {
-		message += "[" + t.Format(layout) + "] 切断されました． " + hashtag
-	} else {
-		message += "[" + t.Format(layout) + "] 復旧されました． " + hashtag
-	}
+func Post(message string) error {
 	tweet, err := twitterApi.PostTweet(message, nil)
 	if err != nil {
 		log.Printf("Tweet: %v", err)
+		return err
 	} else {
 		log.Printf("Tweet success: %v", tweet)
 	}
+	return nil
 }
 
 func init() {

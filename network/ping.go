@@ -10,7 +10,7 @@ import (
 	"golang.org/x/net/ipv4"
 )
 
-func SendPing(conn *icmp.PacketConn, proto, host string, timeout time.Duration) bool {
+func sendPing(conn *icmp.PacketConn, proto, host string, timeout time.Duration) bool {
 	ip, err := net.ResolveIPAddr(proto, host)
 	if err != nil {
 		log.Printf("ResolveIPAddr: %v", err)
