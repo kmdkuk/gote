@@ -2,3 +2,5 @@
 .gitignore
 .go-version
 .env
+
+docker/

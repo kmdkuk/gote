@@ -1,4 +1,4 @@
-module github.com/kmdkuk/network-monitoring
+module github.com/kmdkuk/gote
 
 go 1.13
 
@@ -11,5 +11,6 @@ require (
 	github.com/garyburd/go-oauth v0.0.0-20180319155456-bca2e7f09a17 // indirect
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/joho/godotenv v1.3.0
+	github.com/spf13/cobra v1.0.0
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
 )
