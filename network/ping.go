@@ -40,7 +40,6 @@ func sendPing(conn *icmp.PacketConn, proto, host string, timeout time.Duration) 
 	}
 	rm, err := icmp.ParseMessage(ipv4.ICMPTypeEcho.Protocol(), rb[:n])
 	if err == nil && rm.Type == ipv4.ICMPTypeEchoReply {
-		// log.Println(ip.IP.String() + " ping成功")
 		return true
 	}
 	return false
