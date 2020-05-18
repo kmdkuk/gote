@@ -19,12 +19,6 @@ type checker struct {
 	notification string
 }
 
-var (
-	recentPingResult bool
-	recentStatus     bool
-	count            int
-)
-
 func NewChecker(mode, host, notification string) Checker {
 	return &checker{
 		mode,
@@ -44,6 +38,9 @@ func (c *checker) Check() error {
 }
 
 func (c *checker) checkPing() error {
+	recentStatus := true
+	count := 0
+
 	sleep := 2 * time.Second
 	timeout := 1 * time.Second
 
@@ -58,21 +55,21 @@ func (c *checker) checkPing() error {
 	hashtag := "#kmdkukのネット回線"
 
 	for {
-		if sendPing(conn, proto, c.host, timeout) {
+		if pingResult := sendPing(conn, proto, c.host, timeout); pingResult {
 			if count > 0 {
 				log.Printf("pingが復旧するまで %d 回エラー", count)
 			}
 			count = 0
-			recentPingResult = true
-			if isStatusToggled() {
+			if isStatusToggled(count, recentStatus, pingResult) {
 				message := notification.BuildMessage(recentStatus, hashtag)
 				notification.Notification(c.notification, message)
 				recentStatus = true
 			}
 		} else {
 			count++
-			recentPingResult = false
-			if isStatusToggled() == true {
+			log.Println(count, "here")
+			if isStatusToggled(count, recentStatus, pingResult) {
+				log.Println("send notification")
 				message := notification.BuildMessage(recentStatus, hashtag)
 				notification.Notification(c.notification, message)
 				recentStatus = false
@@ -82,7 +79,7 @@ func (c *checker) checkPing() error {
 	}
 }
 
-func isStatusToggled() bool {
+func isStatusToggled(count int, recentStatus, recentPingResult bool) bool {
 	result := false
 	if recentStatus {
 		if count > 5 && recentPingResult == false {
