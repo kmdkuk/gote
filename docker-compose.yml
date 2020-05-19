@@ -2,8 +2,9 @@ version: "3"
 services:
   gote:
     build: .
-    env_file: .env
     command: "/gote"
+    volumes:
+      - ./.gote.yaml:/.gote.yaml
     restart: always
     depends_on:
       - db
