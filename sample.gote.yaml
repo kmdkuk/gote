@@ -1,0 +1,14 @@
+Mode: http
+Host: https://example.com/healthcheck
+Notification: twitter
+Twitter:
+  access_token: access_token
+  access_token_secret: access_token_secret
+  consumer_key: consumer_key
+  consumer_secret: consumer_secret
+Slack:
+  webhook_url: webhook_url
+  channel: "#channel"
+MsgDisconnect: 切断されました
+MsgConnect: 接続されました
+MsgSuffix: suffix

@@ -5,16 +5,15 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
+
+	"github.com/kmdkuk/gote/cmd/option"
 )
 
 func Post(message string) error {
 	name := "HealthChecker"
-	// TODO: select channel
-	channel := os.Getenv("SLACK_CHANNEL")
-	payload := "{\"channel\": \"" + channel + "\", \"username\": \"" + name + "\", \"text\": \"" + message + "\", \"icon_emoji\": \":ghost:\"}"
+	payload := "{\"channel\": \"" + option.Opt.Slack.Channel + "\", \"username\": \"" + name + "\", \"text\": \"" + message + "\", \"icon_emoji\": \":ghost:\"}"
 	log.Println("payload:", payload)
-	webhookURL := os.Getenv("WEBHOOK_URL")
+	webhookURL := option.Opt.Slack.WebhookURL
 	log.Println("webhookURL:", webhookURL)
 	resp, err := http.PostForm(webhookURL, url.Values{"payload": {payload}})
 	if err != nil {
