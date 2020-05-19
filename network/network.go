@@ -56,23 +56,22 @@ func (c *checker) checkPing() error {
 }
 
 func (c *checker) isStatusToggled(recentCheckResult bool) bool {
-	result := false
 	if c.recentStatus {
 		if c.count > 5 && recentCheckResult == false {
-			result = true
+			return true
 		}
 	} else {
 		if recentCheckResult == true {
-			result = true
+			return true
 		}
 	}
-	return result
+	return false
 }
 
 func (c *checker) statusUpdate(checkResult bool) {
 	if checkResult {
 		if c.count > 0 {
-			log.Printf("pingが復旧するまで %d 回エラー", c.count)
+			log.Printf("復旧するまで %d 回エラー", c.count)
 		}
 		c.count = 0
 		if c.isStatusToggled(checkResult) {
@@ -82,7 +81,6 @@ func (c *checker) statusUpdate(checkResult bool) {
 		}
 	} else {
 		c.count++
-		log.Println(c.count, "here")
 		if c.isStatusToggled(checkResult) {
 			log.Println("send notification")
 			message := notification.BuildMessage(c.recentStatus)

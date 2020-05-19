@@ -18,6 +18,9 @@ func connectTwitterAPI() *anaconda.TwitterApi {
 }
 
 func Post(message string) error {
+	if twitterApi == nil {
+		twitterApi = connectTwitterAPI()
+	}
 	tweet, err := twitterApi.PostTweet(message, nil)
 	if err != nil {
 		log.Printf("Tweet: %v", err)
@@ -26,8 +29,4 @@ func Post(message string) error {
 		log.Printf("Tweet success: %v", tweet)
 	}
 	return nil
-}
-
-func init() {
-	twitterApi = connectTwitterAPI()
 }
