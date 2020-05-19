@@ -17,6 +17,8 @@ type checker struct {
 	mode         string
 	host         string
 	notification string
+	count        int
+	recentStatus bool
 }
 
 func NewChecker(mode, host, notification string) Checker {
@@ -24,6 +26,8 @@ func NewChecker(mode, host, notification string) Checker {
 		mode,
 		host,
 		notification,
+		0,
+		true,
 	}
 }
 
@@ -31,15 +35,13 @@ func (c *checker) Check() error {
 	if c.mode == "ping" {
 		return c.checkPing()
 	} else if c.mode == "http" {
-		return c.checkHttp()
+		return c.checkHTTP()
 	} else {
 		return fmt.Errorf("invalid mode")
 	}
 }
 
 func (c *checker) checkPing() error {
-	recentStatus := true
-	count := 0
 
 	sleep := 2 * time.Second
 	timeout := 1 * time.Second
@@ -52,47 +54,55 @@ func (c *checker) checkPing() error {
 	}
 	defer conn.Close()
 
-	hashtag := "#kmdkukのネット回線"
-
 	for {
-		if pingResult := sendPing(conn, proto, c.host, timeout); pingResult {
-			if count > 0 {
-				log.Printf("pingが復旧するまで %d 回エラー", count)
-			}
-			count = 0
-			if isStatusToggled(count, recentStatus, pingResult) {
-				message := notification.BuildMessage(recentStatus, hashtag)
-				notification.Notification(c.notification, message)
-				recentStatus = true
-			}
-		} else {
-			count++
-			log.Println(count, "here")
-			if isStatusToggled(count, recentStatus, pingResult) {
-				log.Println("send notification")
-				message := notification.BuildMessage(recentStatus, hashtag)
-				notification.Notification(c.notification, message)
-				recentStatus = false
-			}
-		}
+		c.statusUpdate(sendPing(conn, proto, c.host, timeout))
 		time.Sleep(sleep)
 	}
 }
 
-func isStatusToggled(count int, recentStatus, recentPingResult bool) bool {
+func (c *checker) isStatusToggled(recentCheckResult bool) bool {
 	result := false
-	if recentStatus {
-		if count > 5 && recentPingResult == false {
+	if c.recentStatus {
+		if c.count > 5 && recentCheckResult == false {
 			result = true
 		}
 	} else {
-		if recentPingResult == true {
+		if recentCheckResult == true {
 			result = true
 		}
 	}
 	return result
 }
 
-func (c *checker) checkHttp() error {
+func (c *checker) statusUpdate(checkResult bool) {
+	suffix := "#kmdkukのネット回線"
+	if checkResult {
+		if c.count > 0 {
+			log.Printf("pingが復旧するまで %d 回エラー", c.count)
+		}
+		c.count = 0
+		if c.isStatusToggled(checkResult) {
+			message := notification.BuildMessage(c.recentStatus, suffix)
+			notification.Notification(c.notification, message)
+			c.recentStatus = true
+		}
+	} else {
+		c.count++
+		log.Println(c.count, "here")
+		if c.isStatusToggled(checkResult) {
+			log.Println("send notification")
+			message := notification.BuildMessage(c.recentStatus, suffix)
+			notification.Notification(c.notification, message)
+			c.recentStatus = false
+		}
+	}
+}
+
+func (c *checker) checkHTTP() error {
+	sleep := 2 * time.Second
+	for {
+		c.statusUpdate(sendHttp(c.host))
+		time.Sleep(sleep)
+	}
 	return fmt.Errorf("not implemented")
 }

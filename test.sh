@@ -1,2 +1,2 @@
 docker-compose build
-docker-compose run --rm gote /gote -t 1.9.0.0 -n slack -m ping
+docker-compose run --rm gote /gote -t https://blog.kmdkuk.com/ -n slack -m http
