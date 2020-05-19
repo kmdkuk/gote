@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/kmdkuk/gote/cmd/option"
 	"github.com/kmdkuk/gote/notification"
 	"golang.org/x/net/icmp"
 )
@@ -14,30 +15,24 @@ type Checker interface {
 }
 
 type checker struct {
-	mode         string
-	host         string
-	notification string
 	count        int
 	recentStatus bool
 }
 
-func NewChecker(mode, host, notification string) Checker {
+func NewChecker() Checker {
 	return &checker{
-		mode,
-		host,
-		notification,
 		0,
 		true,
 	}
 }
 
 func (c *checker) Check() error {
-	if c.mode == "ping" {
+	if option.Opt.Mode == "ping" {
 		return c.checkPing()
-	} else if c.mode == "http" {
+	} else if option.Opt.Mode == "http" {
 		return c.checkHTTP()
 	} else {
-		return fmt.Errorf("invalid mode")
+		return fmt.Errorf("invalid Mode")
 	}
 }
 
@@ -55,7 +50,7 @@ func (c *checker) checkPing() error {
 	defer conn.Close()
 
 	for {
-		c.statusUpdate(sendPing(conn, proto, c.host, timeout))
+		c.statusUpdate(sendPing(conn, proto, option.Opt.Host, timeout))
 		time.Sleep(sleep)
 	}
 }
@@ -75,15 +70,14 @@ func (c *checker) isStatusToggled(recentCheckResult bool) bool {
 }
 
 func (c *checker) statusUpdate(checkResult bool) {
-	suffix := "#kmdkukのネット回線"
 	if checkResult {
 		if c.count > 0 {
 			log.Printf("pingが復旧するまで %d 回エラー", c.count)
 		}
 		c.count = 0
 		if c.isStatusToggled(checkResult) {
-			message := notification.BuildMessage(c.recentStatus, suffix)
-			notification.Notification(c.notification, message)
+			message := notification.BuildMessage(c.recentStatus)
+			notification.Notification(option.Opt.Notification, message)
 			c.recentStatus = true
 		}
 	} else {
@@ -91,8 +85,8 @@ func (c *checker) statusUpdate(checkResult bool) {
 		log.Println(c.count, "here")
 		if c.isStatusToggled(checkResult) {
 			log.Println("send notification")
-			message := notification.BuildMessage(c.recentStatus, suffix)
-			notification.Notification(c.notification, message)
+			message := notification.BuildMessage(c.recentStatus)
+			notification.Notification(option.Opt.Notification, message)
 			c.recentStatus = false
 		}
 	}
@@ -101,8 +95,7 @@ func (c *checker) statusUpdate(checkResult bool) {
 func (c *checker) checkHTTP() error {
 	sleep := 2 * time.Second
 	for {
-		c.statusUpdate(sendHttp(c.host))
+		c.statusUpdate(sendHttp(option.Opt.Host))
 		time.Sleep(sleep)
 	}
-	return fmt.Errorf("not implemented")
 }
