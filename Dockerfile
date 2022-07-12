@@ -22,7 +22,9 @@ RUN apt-get update && \
     ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 
 COPY --from=builder /gote/bin/gote /gote
-USER 10000:10000
+# have error occured 'fatal   network/network.go:49   ListenPacket    {"error": "listen ip4:icmp 0.0.0.0: socket: operation not permitted"}''
+# USER 10000:10000
+
 
 CMD ["/gote"]
 
