@@ -1,5 +1,5 @@
-# goct documentation
+# gote documentation
 
-goct is CLI to create command line tools made by golang.
+gote is CLI to check network connection"
 
-The repository is at https://github.com/kmdkuk/goct
+The repository is at https://github.com/kmdkuk/gote

@@ -1,5 +1,5 @@
 # Summary
 
-[goct](README.md)
+[gote](README.md)
 
 # User manual
