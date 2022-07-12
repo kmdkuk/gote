@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/kmdkuk/gote/cmd/option"
-	"github.com/kmdkuk/gote/notification"
+	"github.com/kmdkuk/gote/pkg/notification"
 	"golang.org/x/net/icmp"
 )
 

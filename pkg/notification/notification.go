@@ -3,8 +3,8 @@ package notification
 import (
 	"fmt"
 
-	"github.com/kmdkuk/gote/notification/slack"
-	"github.com/kmdkuk/gote/notification/twitter"
+	"github.com/kmdkuk/gote/pkg/notification/slack"
+	"github.com/kmdkuk/gote/pkg/notification/twitter"
 )
 
 func Notification(dest, message string) error {

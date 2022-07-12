@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/kmdkuk/gote/cmd/option"
-	"github.com/kmdkuk/gote/network"
+	"github.com/kmdkuk/gote/pkg/network"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
