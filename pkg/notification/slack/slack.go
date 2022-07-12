@@ -2,24 +2,24 @@ package slack
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 
 	"github.com/kmdkuk/gote/cmd/option"
+	"go.uber.org/zap"
 )
 
 func Post(message string) error {
+	logger := zap.L()
 	name := "HealthChecker"
 	payload := "{\"channel\": \"" + option.Opt.Slack.Channel + "\", \"username\": \"" + name + "\", \"text\": \"" + message + "\", \"icon_emoji\": \":ghost:\"}"
-	log.Println("payload:", payload)
+	logger.Info(fmt.Sprintf("payload: %v", payload))
 	webhookURL := option.Opt.Slack.WebhookURL
-	log.Println("webhookURL:", webhookURL)
 	resp, err := http.PostForm(webhookURL, url.Values{"payload": {payload}})
 	if err != nil {
 		return err
 	}
-	fmt.Println(resp)
+	logger.Info(fmt.Sprintf("%v", resp))
 	defer resp.Body.Close()
 	return nil
 }

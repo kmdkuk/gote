@@ -1,10 +1,11 @@
 package twitter
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/ChimeraCoder/anaconda"
 	"github.com/kmdkuk/gote/cmd/option"
+	"go.uber.org/zap"
 )
 
 var twitterApi *anaconda.TwitterApi
@@ -18,15 +19,14 @@ func connectTwitterAPI() *anaconda.TwitterApi {
 }
 
 func Post(message string) error {
+	logger := zap.L()
 	if twitterApi == nil {
 		twitterApi = connectTwitterAPI()
 	}
 	tweet, err := twitterApi.PostTweet(message, nil)
 	if err != nil {
-		log.Printf("Tweet: %v", err)
 		return err
-	} else {
-		log.Printf("Tweet success: %v", tweet)
 	}
+	logger.Info(fmt.Sprintf("tweet success: %v", tweet))
 	return nil
 }

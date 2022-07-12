@@ -2,10 +2,11 @@ package db
 
 import (
 	"database/sql"
-	"log"
+	"fmt"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"go.uber.org/zap"
 )
 
 var DB *sql.DB
@@ -25,44 +26,48 @@ type DisconnectDate struct {
 
 // TODO: disconnected data store function
 func RecordStartAt() {
+	logger := zap.L()
 	// insert
 	ins, err := DB.Prepare("INSERT INTO `network-monitoring`.disconnect_dates(start_at) VALUES(?)")
 	if err != nil {
-		log.Printf("[Err] Prepare %v", err)
+		logger.Error("prepare error occurred", zap.Error(err))
 	}
-	log.Println(time.Now())
-	_, err = ins.Exec(time.Now())
+	now := time.Now()
+	logger.Info(fmt.Sprintln(now))
+	_, err = ins.Exec(now)
 	if err != nil {
-		log.Printf("[Err] Insert %v", err)
+		logger.Error("insert error occurred", zap.Error(err))
 	}
 }
 
 func RecordEndAt() {
+	logger := zap.L()
 	query := "select * from disconnect_dates where end_at=0;"
 	rows, err := DB.Query(query)
 	if err != nil {
-		log.Printf("[Err] %s %v", query, err)
+		logger.Error("error occurred", zap.Error(err))
 		return
 	}
 	record := DisconnectDate{}
 	rows.Next()
 	if err := rows.Scan(&record.ID, &record.StartAt, &record.EndAt); err != nil {
-		log.Printf("[Err] %v", err)
+		logger.Error("error occurred", zap.Error(err))
 		return
 	}
 	// set end_at
 	upd, err := DB.Prepare("UPDATE disconnect_dates set end_at = ? where id = ?")
 	if err != nil {
-		log.Printf("[Err] Update Prepare: %v", err)
+		logger.Error("update prepare error occurred", zap.Error(err))
 		return
 	}
 	upd.Exec(time.Now(), record.ID)
 }
 
 func init() {
+	logger := zap.L()
 	var err error
 	DB, err = sql.Open(DRIVER_NAME, DATA_SOURCE_NAME)
 	if err != nil {
-		log.Fatal("error connecting to database: ", err)
+		logger.Fatal("error connecting to database", zap.Error(err))
 	}
 }

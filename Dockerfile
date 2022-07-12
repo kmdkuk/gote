@@ -5,7 +5,7 @@ ENV TZ Asia/Tokyo
 ENV CGO_ENABLED=0
 ENV GOOS=linux
 ENV GOARCH=amd64
-ENV APP_ROOT /usr/src/gote
+ENV APP_ROOT /gote
 RUN mkdir -p ${APP_ROOT}
 WORKDIR ${APP_ROOT}
 
@@ -13,11 +13,16 @@ COPY go.mod .
 COPY go.sum .
 RUN go mod download
 COPY . .
-RUN go build -o "bin/gote"
+RUN make build
 
-FROM alpine
-RUN apk --no-cache add tzdata && \
-  cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
-  apk del tzdata
-COPY --from=builder /usr/src/gote/bin/gote /gote
+FROM ubuntu:jammy
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y ca-certificates tzdata && \
+    ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+
+COPY --from=builder /gote/bin/gote /gote
+USER 10000:10000
+
+CMD ["/gote"]
 
