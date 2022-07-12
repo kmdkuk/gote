@@ -54,6 +54,10 @@ help: ## Display this help.
 build: $(BUILD_FILES) ## Build binary
 	go build -trimpath -ldflags "$(GO_LDFLAGS)" -o $(BIN_DIR)/ .
 
+.PHONY: docker-image
+docker-image:
+	docker build .
+
 ##@ Development
 
 .PHONY: test

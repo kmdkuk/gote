@@ -22,3 +22,25 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/metadata-action@v3
+        id: meta
+        with:
+          images: ghcr.io/kmdkuk/gote
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+      - uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: kmdkuk
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
