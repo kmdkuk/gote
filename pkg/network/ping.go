@@ -1,19 +1,20 @@
 package network
 
 import (
-	"log"
 	"net"
 	"os"
 	"time"
 
+	"go.uber.org/zap"
 	"golang.org/x/net/icmp"
 	"golang.org/x/net/ipv4"
 )
 
 func sendPing(conn *icmp.PacketConn, proto, host string, timeout time.Duration) bool {
+	logger := zap.L()
 	ip, err := net.ResolveIPAddr(proto, host)
 	if err != nil {
-		log.Printf("ResolveIPAddr: %v", err)
+		logger.Error("ResolveIPAddr", zap.Error(err))
 		return false
 	}
 	wm := icmp.Message{
@@ -26,10 +27,10 @@ func sendPing(conn *icmp.PacketConn, proto, host string, timeout time.Duration) 
 	}
 	wb, err := wm.Marshal(nil)
 	if err != nil {
-		log.Printf("Marshal: %v", err)
+		logger.Error("marshal", zap.Error(err))
 	}
 	if _, err := conn.WriteTo(wb, &net.IPAddr{IP: ip.IP}); err != nil {
-		log.Printf("WriteTo: %v", err)
+		logger.Error("write to", zap.Error(err))
 	}
 
 	conn.SetReadDeadline(time.Now().Add(timeout))

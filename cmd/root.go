@@ -1,14 +1,14 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
 	"os"
 
 	"github.com/kmdkuk/gote/cmd/option"
+	"github.com/kmdkuk/gote/pkg/logging"
 	"github.com/kmdkuk/gote/pkg/network"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 var (
@@ -28,29 +28,31 @@ func init() {
 	rootCmd.Flags().StringVar(&option.Opt.MsgConnect, "msgconnect", "connected", "Message when connecting")
 	rootCmd.Flags().StringVar(&option.Opt.MsgSuffix, "msgsuffix", "", "Suffix of common message")
 
+	logging.AddLoggingFlags(rootCmd)
+
 	rootCmd.AddCommand(configCmd)
 }
 
 func initconf() {
+	logger := zap.L()
 	viper.SetConfigFile(configFile)
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			// Config file not found; ignore error if desired
 			return
-		} else {
-			// Config file was found but another error was produced
 		}
+		// Config file was found but another error was produced
 	}
 	if err := viper.Unmarshal(&option.Opt); err != nil {
-		fmt.Println(err)
+		logger.Error("config unmarshal failed", zap.Error(err))
 		os.Exit(1)
 	}
 }
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
-		fmt.Fprintf(os.Stderr, "%v\n", rootCmd.UsageString())
+		logger := zap.L()
+		logger.Error("error occurred", zap.Error(err))
 		os.Exit(1)
 	}
 }
@@ -65,9 +67,10 @@ var rootCmd = &cobra.Command{
 }
 
 func run(cmd *cobra.Command, args []string) {
+	logger := zap.L()
 	c := network.NewChecker()
 	err := c.Check()
 	if err != nil {
-		log.Fatalln(err)
+		logger.Fatal("error occurred", zap.Error(err))
 	}
 }

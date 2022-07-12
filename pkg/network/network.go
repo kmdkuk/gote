@@ -2,11 +2,11 @@ package network
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/kmdkuk/gote/cmd/option"
 	"github.com/kmdkuk/gote/pkg/notification"
+	"go.uber.org/zap"
 	"golang.org/x/net/icmp"
 )
 
@@ -37,6 +37,7 @@ func (c *checker) Check() error {
 }
 
 func (c *checker) checkPing() error {
+	logger := zap.L()
 
 	sleep := 2 * time.Second
 	timeout := 1 * time.Second
@@ -45,7 +46,7 @@ func (c *checker) checkPing() error {
 
 	conn, err := icmp.ListenPacket(proto+":icmp", "0.0.0.0")
 	if err != nil {
-		log.Fatalf("ListenPacket: %v", err)
+		logger.Fatal("ListenPacket", zap.Error(err))
 	}
 	defer conn.Close()
 
@@ -57,11 +58,11 @@ func (c *checker) checkPing() error {
 
 func (c *checker) isStatusToggled(recentCheckResult bool) bool {
 	if c.recentStatus {
-		if c.count > 5 && recentCheckResult == false {
+		if c.count > 5 && !recentCheckResult {
 			return true
 		}
 	} else {
-		if recentCheckResult == true {
+		if recentCheckResult {
 			return true
 		}
 	}
@@ -69,11 +70,13 @@ func (c *checker) isStatusToggled(recentCheckResult bool) bool {
 }
 
 func (c *checker) statusUpdate(checkResult bool) {
+	logger := zap.L()
 	if checkResult {
 		if c.count > 0 {
-			log.Printf("復旧するまで %d 回エラー", c.count)
+			logger.Info(fmt.Sprintf("復旧するまで %d 回エラー", c.count))
 		}
 		c.count = 0
+		logger.Debug("check succeeded")
 		if c.isStatusToggled(checkResult) {
 			message := notification.BuildMessage(c.recentStatus)
 			notification.Notification(option.Opt.Notification, message)
@@ -81,8 +84,9 @@ func (c *checker) statusUpdate(checkResult bool) {
 		}
 	} else {
 		c.count++
+		logger.Debug("check failed")
 		if c.isStatusToggled(checkResult) {
-			log.Println("send notification")
+			logger.Info("send notification")
 			message := notification.BuildMessage(c.recentStatus)
 			notification.Notification(option.Opt.Notification, message)
 			c.recentStatus = false
