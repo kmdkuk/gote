@@ -50,11 +50,8 @@ func (n *notifier) Notify(msg string) error {
 func (n *notifier) buildMessage(recentStatus bool) string {
 	t := time.Now()
 	layout := "2006-01-02 15:04"
-	message := ""
 	if recentStatus {
-		message += "[" + t.Format(layout) + "] " + n.msgDisconnect + " " + n.msgSuffix
-	} else {
-		message += "[" + t.Format(layout) + "] " + n.msgConnect + " " + n.msgSuffix
+		return "[" + t.Format(layout) + "] " + n.msgDisconnect + " " + n.msgSuffix
 	}
-	return message
+	return "[" + t.Format(layout) + "] " + n.msgConnect + " " + n.msgSuffix
 }

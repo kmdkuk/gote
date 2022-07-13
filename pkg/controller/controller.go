@@ -44,13 +44,13 @@ func (c controller) Run() {
 	logger := zap.L()
 	c.notifier.Notify("Start Health Checker")
 	for {
+		time.Sleep(2 * time.Second)
 		status, err := c.checker.Check()
 		if err != nil {
-			status = false
 			logger.Error("check error occurred", zap.Error(err))
+			continue
 		}
 		c.statusUpdate(status)
-		time.Sleep(2 * time.Second)
 	}
 }
 
