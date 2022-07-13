@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/kmdkuk/gote/pkg/controller"
 	"github.com/kmdkuk/gote/pkg/logging"
 	"github.com/kmdkuk/gote/pkg/option"
@@ -38,16 +36,14 @@ func initconf() {
 		// Config file was found but another error was produced
 	}
 	if err := viper.Unmarshal(&opts); err != nil {
-		logger.Error("config unmarshal failed", zap.Error(err))
-		os.Exit(1)
+		logger.Fatal("config unmarshal failed", zap.Error(err))
 	}
 }
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		logger := zap.L()
-		logger.Error("error occurred", zap.Error(err))
-		os.Exit(1)
+		logger.Fatal("error occurred", zap.Error(err))
 	}
 }
 
