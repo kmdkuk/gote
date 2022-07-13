@@ -1,11 +1,9 @@
 package cmd
 
 import (
-	"os"
-
-	"github.com/kmdkuk/gote/cmd/option"
+	"github.com/kmdkuk/gote/pkg/controller"
 	"github.com/kmdkuk/gote/pkg/logging"
-	"github.com/kmdkuk/gote/pkg/network"
+	"github.com/kmdkuk/gote/pkg/option"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -13,21 +11,15 @@ import (
 
 var (
 	configFile string
+	opts       option.Options
 )
 
 func init() {
 	cobra.OnInitialize(initconf)
 
-	rootCmd.Flags().StringVarP(&configFile, "file", "f", ".gote.yaml", "Gote config file")
+	rootCmd.PersistentFlags().StringVarP(&configFile, "file", "f", ".gote.yaml", "Gote config file")
 
-	rootCmd.Flags().StringVarP(&option.Opt.Mode, "mode", "m", "ping", "How to do a health check. ping or http")
-	rootCmd.Flags().StringVarP(&option.Opt.Host, "target", "t", "127.0.0.1", "Target for health check. domain or ip or URL")
-	rootCmd.Flags().StringVarP(&option.Opt.Notification, "notification", "n", "slack", "Destination to notify when health check fails. slack or twitter")
-
-	rootCmd.Flags().StringVar(&option.Opt.MsgDisconnect, "msgdisconnect", "disconnected", "Message when disconnecting")
-	rootCmd.Flags().StringVar(&option.Opt.MsgConnect, "msgconnect", "connected", "Message when connecting")
-	rootCmd.Flags().StringVar(&option.Opt.MsgSuffix, "msgsuffix", "", "Suffix of common message")
-
+	option.AddOptionFlags(rootCmd, &opts)
 	logging.AddLoggingFlags(rootCmd)
 
 	rootCmd.AddCommand(configCmd)
@@ -43,17 +35,15 @@ func initconf() {
 		}
 		// Config file was found but another error was produced
 	}
-	if err := viper.Unmarshal(&option.Opt); err != nil {
-		logger.Error("config unmarshal failed", zap.Error(err))
-		os.Exit(1)
+	if err := viper.Unmarshal(&opts); err != nil {
+		logger.Fatal("config unmarshal failed", zap.Error(err))
 	}
 }
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		logger := zap.L()
-		logger.Error("error occurred", zap.Error(err))
-		os.Exit(1)
+		logger.Fatal("error occurred", zap.Error(err))
 	}
 }
 
@@ -63,14 +53,20 @@ var rootCmd = &cobra.Command{
 	Long:          "Service health check and notification",
 	SilenceErrors: true,
 	SilenceUsage:  true,
-	Run:           run,
+	RunE:          run,
 }
 
-func run(cmd *cobra.Command, args []string) {
-	logger := zap.L()
-	c := network.NewChecker()
-	err := c.Check()
+func run(cmd *cobra.Command, args []string) (err error) {
+	c, err := controller.NewController(opts)
 	if err != nil {
-		logger.Fatal("error occurred", zap.Error(err))
+		return err
 	}
+	defer func() {
+		err2 := c.Close()
+		if err2 != nil {
+			err = err2
+		}
+	}()
+	c.Run()
+	return nil
 }
