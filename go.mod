@@ -7,7 +7,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0
-	go.uber.org/zap v1.17.0
+	go.uber.org/zap v1.21.0
 	golang.org/x/net v0.0.0-20220708220712-1185a9018129
 )
 
