@@ -26,10 +26,10 @@ type Slack struct {
 }
 
 func AddOptionFlags(cmd *cobra.Command, opts *Options) {
-	cmd.Flags().StringVarP(&opts.Mode, "mode", "m", "ping", "How to do a health check. ping or http")
-	cmd.Flags().StringVarP(&opts.Host, "target", "t", "127.0.0.1", "Target for health check. domain or ip or URL")
-	cmd.Flags().StringVarP(&opts.Notification, "notification", "n", "slack", "Destination to notify when health check fails. slack or twitter")
-	cmd.Flags().StringVar(&opts.MsgDisconnect, "msgdisconnect", "disconnected", "Message when disconnecting")
-	cmd.Flags().StringVar(&opts.MsgConnect, "msgconnect", "connected", "Message when connecting")
-	cmd.Flags().StringVar(&opts.MsgSuffix, "msgsuffix", "", "Suffix of common message")
+	cmd.PersistentFlags().StringVarP(&opts.Mode, "mode", "m", "ping", "How to do a health check. ping or http")
+	cmd.PersistentFlags().StringVarP(&opts.Host, "target", "t", "127.0.0.1", "Target for health check. domain or ip or URL")
+	cmd.PersistentFlags().StringVarP(&opts.Notification, "notification", "n", "slack", "Destination to notify when health check fails. slack or twitter")
+	cmd.PersistentFlags().StringVar(&opts.MsgDisconnect, "msgdisconnect", "disconnected", "Message when disconnecting")
+	cmd.PersistentFlags().StringVar(&opts.MsgConnect, "msgconnect", "connected", "Message when connecting")
+	cmd.PersistentFlags().StringVar(&opts.MsgSuffix, "msgsuffix", "", "Suffix of common message")
 }

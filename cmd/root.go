@@ -17,7 +17,7 @@ var (
 func init() {
 	cobra.OnInitialize(initconf)
 
-	rootCmd.Flags().StringVarP(&configFile, "file", "f", ".gote.yaml", "Gote config file")
+	rootCmd.PersistentFlags().StringVarP(&configFile, "file", "f", ".gote.yaml", "Gote config file")
 
 	option.AddOptionFlags(rootCmd, &opts)
 	logging.AddLoggingFlags(rootCmd)
