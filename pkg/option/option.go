@@ -1,11 +1,5 @@
 package option
 
-var Opt Options
-
-func init() {
-	Opt = Options{}
-}
-
 type Options struct {
 	Mode          string
 	Host          string

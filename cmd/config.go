@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/kmdkuk/gote/cmd/option"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -19,5 +18,5 @@ var configCmd = &cobra.Command{
 
 func runConfig(c *cobra.Command, args []string) {
 	logger := zap.L()
-	logger.Info(fmt.Sprintf("config: %+v", option.Opt))
+	logger.Info(fmt.Sprintf("config: %+v", opts))
 }
