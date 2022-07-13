@@ -21,14 +21,7 @@ func init() {
 
 	rootCmd.Flags().StringVarP(&configFile, "file", "f", ".gote.yaml", "Gote config file")
 
-	rootCmd.Flags().StringVarP(&opts.Mode, "mode", "m", "ping", "How to do a health check. ping or http")
-	rootCmd.Flags().StringVarP(&opts.Host, "target", "t", "127.0.0.1", "Target for health check. domain or ip or URL")
-	rootCmd.Flags().StringVarP(&opts.Notification, "notification", "n", "slack", "Destination to notify when health check fails. slack or twitter")
-
-	rootCmd.Flags().StringVar(&opts.MsgDisconnect, "msgdisconnect", "disconnected", "Message when disconnecting")
-	rootCmd.Flags().StringVar(&opts.MsgConnect, "msgconnect", "connected", "Message when connecting")
-	rootCmd.Flags().StringVar(&opts.MsgSuffix, "msgsuffix", "", "Suffix of common message")
-
+	option.AddOptionFlags(rootCmd, &opts)
 	logging.AddLoggingFlags(rootCmd)
 
 	rootCmd.AddCommand(configCmd)
