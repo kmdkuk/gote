@@ -38,8 +38,8 @@ type notifier struct {
 	msgSuffix     string
 }
 
-func (n *notifier) NotifyStatus(status bool) error {
-	msg := n.buildMessage(status)
+func (n *notifier) NotifyStatus(connection bool) error {
+	msg := n.buildMessage(connection)
 	return n.Notify(msg)
 }
 
@@ -47,11 +47,11 @@ func (n *notifier) Notify(msg string) error {
 	return n.provider.Post(msg)
 }
 
-func (n *notifier) buildMessage(recentStatus bool) string {
+func (n *notifier) buildMessage(connection bool) string {
 	t := time.Now()
 	layout := "2006-01-02 15:04"
-	if recentStatus {
-		return "[" + t.Format(layout) + "] " + n.msgDisconnect + " " + n.msgSuffix
+	if connection {
+		return "[" + t.Format(layout) + "] " + n.msgConnect + " " + n.msgSuffix
 	}
-	return "[" + t.Format(layout) + "] " + n.msgConnect + " " + n.msgSuffix
+	return "[" + t.Format(layout) + "] " + n.msgDisconnect + " " + n.msgSuffix
 }

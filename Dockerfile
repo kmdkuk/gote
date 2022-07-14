@@ -12,7 +12,11 @@ WORKDIR ${APP_ROOT}
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
-COPY . .
+
+COPY main.go main.go
+COPY cmd cmd
+COPY pkg pkg
+COPY Makefile Makefile
 RUN make build
 
 FROM ubuntu:jammy

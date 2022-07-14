@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/kmdkuk/gote/pkg/checker"
+	"github.com/kmdkuk/gote/pkg/constants"
 	"github.com/kmdkuk/gote/pkg/notifier"
 	"github.com/kmdkuk/gote/pkg/option"
 	"go.uber.org/zap"
@@ -44,13 +45,13 @@ type controller struct {
 
 func (c controller) Run() {
 	logger := zap.L()
-	c.notifier.Notify("Start Health Checker")
+	c.notifier.Notify(constants.MsgFirst)
 	for {
 		time.Sleep(c.interval)
 		status, err := c.checker.Check()
 		if err != nil {
 			logger.Error("check error occurred", zap.Error(err))
-			continue
+			status = false
 		}
 		c.statusUpdate(status)
 	}
@@ -65,7 +66,7 @@ func (c *controller) statusUpdate(checkResult bool) {
 		c.count = 0
 		logger.Debug("check succeeded")
 		if c.isStatusToggled(checkResult) {
-			c.notifier.NotifyStatus(c.recentStatus)
+			c.notifier.NotifyStatus(checkResult)
 			c.recentStatus = true
 		}
 		return
@@ -73,7 +74,7 @@ func (c *controller) statusUpdate(checkResult bool) {
 	c.count++
 	logger.Debug("check failed")
 	if c.isStatusToggled(checkResult) {
-		c.notifier.NotifyStatus(c.recentStatus)
+		c.notifier.NotifyStatus(checkResult)
 		c.recentStatus = false
 	}
 }

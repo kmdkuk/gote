@@ -26,27 +26,27 @@ func AddLoggingFlags(cmd *cobra.Command) {
 	)
 
 	cobra.OnInitialize(func() {
-		base()
+		SetBaseLogging()
 		switch {
 		case debugEnabled:
-			debug()
+			SetDebugLogging()
 		case verboseEnabled:
-			verbose()
+			SetVerboseLogging()
 		}
 	})
 }
 
-func base() {
+func SetBaseLogging() {
 	logger, _ := baseLogConfig().Build()
 	zap.ReplaceGlobals(logger)
 }
 
-func debug() {
+func SetDebugLogging() {
 	logger, _ := debugLogConfig().Build()
 	zap.ReplaceGlobals(logger)
 }
 
-func verbose() {
+func SetVerboseLogging() {
 	logger, _ := verboseLogConfig().Build()
 	zap.ReplaceGlobals(logger)
 }
