@@ -28,6 +28,7 @@ func NewController(opts option.Options) (Controller, error) {
 	return &controller{
 		checker:      c,
 		notifier:     n,
+		interval:     opts.Interval,
 		count:        0,
 		recentStatus: true,
 	}, nil
@@ -38,13 +39,14 @@ type controller struct {
 	notifier     notifier.Notifier
 	count        int
 	recentStatus bool
+	interval     time.Duration
 }
 
 func (c controller) Run() {
 	logger := zap.L()
 	c.notifier.Notify("Start Health Checker")
 	for {
-		time.Sleep(2 * time.Second)
+		time.Sleep(c.interval)
 		status, err := c.checker.Check()
 		if err != nil {
 			logger.Error("check error occurred", zap.Error(err))
