@@ -62,7 +62,7 @@ docker-image:
 
 .PHONY: test
 test: lint ## Run lint & test.
-	go test ./...
+	go test ./... -v --race -count 1 -ginkgo.progress -ginkgo.v
 
 .PHONY: lint
 lint: staticcheck ## Run lint
