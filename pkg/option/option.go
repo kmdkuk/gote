@@ -1,6 +1,10 @@
 package option
 
-import "github.com/spf13/cobra"
+import (
+	"time"
+
+	"github.com/spf13/cobra"
+)
 
 type Options struct {
 	Mode          string
@@ -11,6 +15,7 @@ type Options struct {
 	MsgDisconnect string
 	MsgConnect    string
 	MsgSuffix     string
+	Interval      time.Duration
 }
 
 type Twitter struct {
@@ -32,4 +37,5 @@ func AddOptionFlags(cmd *cobra.Command, opts *Options) {
 	cmd.PersistentFlags().StringVar(&opts.MsgDisconnect, "msgdisconnect", "disconnected", "Message when disconnecting")
 	cmd.PersistentFlags().StringVar(&opts.MsgConnect, "msgconnect", "connected", "Message when connecting")
 	cmd.PersistentFlags().StringVar(&opts.MsgSuffix, "msgsuffix", "", "Suffix of common message")
+	cmd.PersistentFlags().DurationVar(&opts.Interval, "interval", time.Second, "Check interval time")
 }
