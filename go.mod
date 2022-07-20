@@ -11,6 +11,8 @@ require (
 	golang.org/x/net v0.0.0-20220708220712-1185a9018129
 )
 
+require github.com/google/go-cmp v0.5.8 // indirect
+
 require (
 	github.com/ChimeraCoder/tokenbucket v0.0.0-20131201223612-c5a927568de7 // indirect
 	github.com/azr/backoff v0.0.0-20160115115103-53511d3c7330 // indirect
@@ -23,7 +25,7 @@ require (
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/onsi/ginkgo/v2 v2.1.4
-	github.com/onsi/gomega v1.19.0
+	github.com/onsi/gomega v1.20.0
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.2 // indirect
 	github.com/spf13/afero v1.8.2 // indirect
