@@ -4,14 +4,17 @@ go 1.18
 
 require (
 	github.com/ChimeraCoder/anaconda v2.0.0+incompatible
-	github.com/go-sql-driver/mysql v1.6.0
+	github.com/go-sql-driver/mysql v1.8.1
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0
 	go.uber.org/zap v1.21.0
 	golang.org/x/net v0.0.0-20220722155237-a158d28d115b
 )
 
-require github.com/google/go-cmp v0.5.8 // indirect
+require (
+	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/google/go-cmp v0.5.8 // indirect
+)
 
 require (
 	github.com/ChimeraCoder/tokenbucket v0.0.0-20131201223612-c5a927568de7 // indirect
