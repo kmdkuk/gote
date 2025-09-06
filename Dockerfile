@@ -1,4 +1,4 @@
-FROM golang:1.18.5 as builder
+FROM golang:1.25.1 as builder
 
 ENV LANG C.UTF-8
 ENV TZ Asia/Tokyo
